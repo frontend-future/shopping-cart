@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useCart } from '../contexts/CartContext';
 import Navbar from '../components/Navbar';
 import './Product.css';
 
@@ -18,6 +19,8 @@ const Product = () => {
   const [product, setProduct] = useState<ApiProduct | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!productId) {
@@ -74,18 +77,31 @@ const Product = () => {
     );
   }
 
-  // TODO: Implement add to cart functionality
   const handleAddToCart = () => {
-    console.log('add to cart clicked!');
-
-    // Add product to cart state/context
+    if (product) {
+      addToCart({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        description: product.description,
+        category: product.category,
+        image: product.image,
+      });
+    }
   };
 
-  // TODO: Implement buy now functionality
   const handleBuyNow = () => {
-    console.log('buy now clicked!');
-
-    // Navigate to checkout with this product
+    if (product) {
+      addToCart({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        description: product.description,
+        category: product.category,
+        image: product.image,
+      });
+      navigate('/cart');
+    }
   };
 
   return (

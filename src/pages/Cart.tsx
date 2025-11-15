@@ -1,14 +1,12 @@
 import { Link } from 'react-router-dom';
+import { useCart } from '../contexts/CartContext';
 import Navbar from '../components/Navbar';
 import './Cart.css';
 
 const Cart = () => {
-  // TODO: Implement cart state management to fetch and display cart items
-  // TODO: Calculate total price from cart items
-  // TODO: Integrate with API to fetch cart data
+  const { cart, removeFromCart } = useCart();
 
-  const cartItems: any[] = []; // Placeholder - replace with actual cart state
-  const total = 0; // Placeholder - calculate from cart items
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   // TODO: Implement checkout functionality
   const handleCheckout = () => {
@@ -20,7 +18,7 @@ const Cart = () => {
       <Navbar />
       <div className="cart-container">
         <h1 className="cart-title">Shopping Cart</h1>
-        {cartItems.length === 0 ? (
+        {cart.length === 0 ? (
           <div className="cart-empty">
             <p>Your cart is empty</p>
             <Link to="/browse" className="cart-browse-link">
@@ -30,12 +28,34 @@ const Cart = () => {
         ) : (
           <div className="cart-content">
             <div className="cart-items">
-              {/* TODO: Map through cart items and display them */}
-              {cartItems.map((item) => (
-                <div key={item.id} className="cart-item">
-                  {/* Cart item display will go here */}
-                </div>
-              ))}
+              {cart.map((item) => {
+                const subtotal = item.price * item.quantity;
+                return (
+                  <div key={item.id} className="cart-item">
+                    <div className="cart-item-image">
+                      {item.image ? (
+                        <img src={item.image} alt={item.title} />
+                      ) : (
+                        <div className="cart-item-placeholder">No Image</div>
+                      )}
+                    </div>
+                    <div className="cart-item-details">
+                      <h3 className="cart-item-title">{item.title}</h3>
+                      <p className="cart-item-price">${item.price.toFixed(2)} per unit</p>
+                      <p className="cart-item-quantity">Quantity: {item.quantity}</p>
+                      <p className="cart-item-subtotal">Subtotal: ${subtotal.toFixed(2)}</p>
+                    </div>
+                    <div className="cart-item-actions">
+                      <button
+                        className="btn-remove"
+                        onClick={() => removeFromCart(item.id)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
             <div className="cart-summary">
               <div className="cart-total">
